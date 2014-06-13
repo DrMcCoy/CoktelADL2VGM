@@ -7,8 +7,10 @@ noinst_HEADERS = \
                  system.hpp \
                  endianness.hpp \
                  util.hpp \
+                 error.hpp \
                  $(EMPTY)
 
 libcommon_la_SOURCES = \
                        util.cpp \
+                       error.cpp \
                        $(EMPTY)
