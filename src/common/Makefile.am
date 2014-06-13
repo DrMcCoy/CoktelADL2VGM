@@ -8,9 +8,11 @@ noinst_HEADERS = \
                  endianness.hpp \
                  util.hpp \
                  error.hpp \
+                 stream.hpp \
                  $(EMPTY)
 
 libcommon_la_SOURCES = \
                        util.cpp \
                        error.cpp \
+                       stream.cpp \
                        $(EMPTY)
