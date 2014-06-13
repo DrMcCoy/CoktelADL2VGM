@@ -9,6 +9,7 @@ noinst_HEADERS = \
                  util.hpp \
                  error.hpp \
                  stream.hpp \
+                 noncopyable.hpp \
                  $(EMPTY)
 
 libcommon_la_SOURCES = \
