@@ -85,7 +85,6 @@ const uint16 AdLib::kHihatParams    [kParamCount] = {
 
 AdLib::AdLib() : _first(true), _ended(true) {
 	initFreqs();
-	initOPL();
 }
 
 AdLib::~AdLib() {
@@ -97,32 +96,26 @@ uint32 AdLib::getSamplesPerSecond() const {
 
 void AdLib::convert() {
 	_first = true;
+	_ended = false;
 
-	reset();
+	initOPL();
 	rewind();
 
-	// TODO
+	while (!_ended) {
+		uint32 delay = pollMusic(_first);
+		if (delay)
+			status("| %u", delay);
+
+		_first = false;
+	}
 }
 
 void AdLib::writeOPL(byte reg, byte val) {
-	// TODO
-}
-
-void AdLib::reset() {
-	allOff();
-	initOPL();
-}
-
-void AdLib::allOff() {
-	// NOTE: Explicit casts are necessary, because of 5.16 paragraph 4 of the C++ standard
-	int numVoices = isPercussionMode() ? (int)kMaxVoiceCount : (int)kMelodyVoiceCount;
-
-	for (int i = 0; i < numVoices; i++)
-		noteOff(i);
+	status("> %u %u", reg, val);
 }
 
 void AdLib::end(bool killRepeat) {
-	// TODO
+	_ended = true;
 }
 
 void AdLib::initOPL() {

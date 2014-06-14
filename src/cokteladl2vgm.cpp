@@ -33,6 +33,8 @@
 #include "common/error.hpp"
 #include "common/file.hpp"
 
+#include "adlplayer.hpp"
+
 struct Job;
 
 void printUsage(const char *name);
@@ -157,6 +159,10 @@ void convertADL(const std::string &adlFile) {
 
 	// Open the input file
 	Common::File adl(adlFile);
+	ADLPlayer adlPlayer(adl);
+
+	status("Loaded...");
+	adlPlayer.convert();
 }
 
 /** Convert a MDY+TBR file into VGM. */

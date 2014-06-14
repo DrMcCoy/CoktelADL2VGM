@@ -32,11 +32,9 @@ namespace Common {
 /** A VGM recording player for Coktel Vision's ADL music format. */
 class ADLPlayer : public AdLib {
 public:
-	ADLPlayer();
+	ADLPlayer(Common::SeekableReadStream &adl);
 	~ADLPlayer();
 
-	bool load(Common::SeekableReadStream &adl);
-	bool load(const byte *data, uint32 dataSize);
 	void unload();
 
 protected:
@@ -63,11 +61,13 @@ private:
 	uint16 _currentInstruments[kMaxVoiceCount];
 
 
+	void load(Common::SeekableReadStream &adl);
+
 	void setInstrument(int voice, int instrument);
 
-	bool readHeader  (Common::SeekableReadStream &adl, int &timbreCount);
-	bool readTimbres (Common::SeekableReadStream &adl, int  timbreCount);
-	bool readSongData(Common::SeekableReadStream &adl);
+	void readHeader  (Common::SeekableReadStream &adl, int &timbreCount);
+	void readTimbres (Common::SeekableReadStream &adl, int  timbreCount);
+	void readSongData(Common::SeekableReadStream &adl);
 
 	uint32 getSampleDelay(uint16 delay) const;
 };

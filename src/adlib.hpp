@@ -21,6 +21,8 @@
 #ifndef ADLIB_HPP
 #define ADLIB_HPP
 
+#include <list>
+
 #include "common/types.hpp"
 
 /** Base class for a VGM recording player of an AdLib music format. */
@@ -227,9 +229,6 @@ private:
 
 
 	void initOPL();
-
-	void reset();
-	void allOff();
 
 	// Write global parameters into the OPL
 	void writeTremoloVibratoDepthPercMode();

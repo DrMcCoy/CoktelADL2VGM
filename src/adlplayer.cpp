@@ -18,11 +18,13 @@
  * along with CoktelADL2VGM. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/error.hpp"
 #include "common/stream.hpp"
 
 #include "adlplayer.hpp"
 
-ADLPlayer::ADLPlayer() : _songData(0), _songDataSize(0), _playPos(0) {
+ADLPlayer::ADLPlayer(Common::SeekableReadStream &adl) : _songData(0), _songDataSize(0), _playPos(0) {
+	load(adl);
 }
 
 ADLPlayer::~ADLPlayer() {
@@ -65,13 +67,13 @@ uint32 ADLPlayer::pollMusic(bool first) {
 	if (cmd >= 0xD0) {
 		// Modify an instrument
 
-		if      (_modifyInstrument == 0xFF)
-			warning("ADLPlayer: No instrument to modify");
-		else if (_modifyInstrument >= _timbres.size())
-			warning("ADLPlayer: Can't modify invalid instrument %d (%d)", _modifyInstrument, (int)_timbres.size());
-		else
-			_timbres[_modifyInstrument].params[_playPos[0]] = _playPos[1];
+		if (_modifyInstrument == 0xFF)
+			throw Common::Exception("No instrument to modify");
+		if (_modifyInstrument >= _timbres.size())
+			throw Common::Exception("Can't modify invalid instrument %d (%d)",
+					_modifyInstrument, (int)_timbres.size());
 
+		_timbres[_modifyInstrument].params[_playPos[0]] = _playPos[1];
 		_playPos += 2;
 
 		// If we currently have that instrument loaded, reload it
@@ -114,9 +116,7 @@ uint32 ADLPlayer::pollMusic(bool first) {
 			break;
 
 		default:
-			warning("ADLPlayer: Unsupported command: 0x%02X. Stopping playback.", cmd);
-			end(true);
-			return 0;
+			throw Common::Exception("Unsupported command: 0x%02X", cmd);
 		}
 	}
 
@@ -159,75 +159,45 @@ void ADLPlayer::rewind() {
 	_modifyInstrument = 0xFF;
 }
 
-bool ADLPlayer::load(Common::SeekableReadStream &adl) {
-	unload();
-
+void ADLPlayer::load(Common::SeekableReadStream &adl) {
 	int timbreCount;
-	if (!readHeader(adl, timbreCount)) {
-		unload();
-		return false;
-	}
 
-	if (!readTimbres(adl, timbreCount) || !readSongData(adl) || adl.err()) {
-		unload();
-		return false;
-	}
+	readHeader(adl, timbreCount);
+	readTimbres(adl, timbreCount);
+	readSongData(adl);
 
-	rewind();
-
-	return true;
+	if (adl.err())
+		throw Common::kReadError;
 }
 
-bool ADLPlayer::readHeader(Common::SeekableReadStream &adl, int &timbreCount) {
+void ADLPlayer::readHeader(Common::SeekableReadStream &adl, int &timbreCount) {
 	// Sanity check
-	if (adl.size() < 60) {
-		warning("ADLPlayer::readHeader(): File too small (%d)", adl.size());
-		return false;
-	}
+	if (adl.size() < 60)
+		throw Common::Exception("File too small (%d)", adl.size());
 
 	_soundMode  = adl.readByte();
 	timbreCount = adl.readByte() + 1;
 
 	adl.skip(1);
-
-	return true;
 }
 
-bool ADLPlayer::readTimbres(Common::SeekableReadStream &adl, int timbreCount) {
+void ADLPlayer::readTimbres(Common::SeekableReadStream &adl, int timbreCount) {
 	_timbres.resize(timbreCount);
 	for (std::vector<Timbre>::iterator t = _timbres.begin(); t != _timbres.end(); ++t) {
 		for (int i = 0; i < (kOperatorsPerVoice * kParamCount); i++)
 			t->startParams[i] = adl.readUint16LE();
 	}
 
-	if (adl.err()) {
-		warning("ADLPlayer::readTimbres(): Read failed");
-		return false;
-	}
-
-	return true;
+	if (adl.err())
+		throw Common::kReadError;
 }
 
-bool ADLPlayer::readSongData(Common::SeekableReadStream &adl) {
+void ADLPlayer::readSongData(Common::SeekableReadStream &adl) {
 	_songDataSize = adl.size() - adl.pos();
 	_songData     = new byte[_songDataSize];
 
-	if (adl.read(_songData, _songDataSize) != _songDataSize) {
-		warning("ADLPlayer::readSongData(): Read failed");
-		return false;
-	}
-
-	return true;
-}
-
-bool ADLPlayer::load(const byte *data, uint32 dataSize) {
-	unload();
-
-	Common::MemoryReadStream stream(data, dataSize);
-	if (!load(stream))
-		return false;
-
-	return true;
+	if (adl.read(_songData, _songDataSize) != _songDataSize)
+		throw Common::kReadError;
 }
 
 void ADLPlayer::setInstrument(int voice, int instrument) {
