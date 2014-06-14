@@ -27,7 +27,12 @@
 namespace AdLib {
 
 ADLPlayer::ADLPlayer(Common::SeekableReadStream &adl) : _songData(0), _songDataSize(0), _playPos(0) {
-	load(adl);
+	try {
+		load(adl);
+	} catch (Common::Exception &e) {
+		e.add("Failed to load ADL");
+		throw;
+	}
 }
 
 ADLPlayer::~ADLPlayer() {
