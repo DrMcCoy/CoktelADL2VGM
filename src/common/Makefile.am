@@ -7,6 +7,7 @@ noinst_HEADERS = \
                  system.hpp \
                  endianness.hpp \
                  util.hpp \
+                 version.hpp \
                  error.hpp \
                  stream.hpp \
                  noncopyable.hpp \
@@ -15,6 +16,7 @@ noinst_HEADERS = \
 
 libcommon_la_SOURCES = \
                        util.cpp \
+                       version.cpp \
                        error.cpp \
                        stream.cpp \
                        file.cpp \
