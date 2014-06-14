@@ -119,6 +119,9 @@ uint32 AdLib::getSamplesPerSecond() const {
 void AdLib::convert(const std::string &outFile) {
 	createVGMData();
 
+	if (_vgmLength < 44100)
+		throw Common::Exception("VGM shorter than one second");
+
 	Common::DumpFile vgm;
 	if (!vgm.open(outFile))
 		throw Common::Exception("Failed to open \"%s\" for writing", outFile.c_str());
