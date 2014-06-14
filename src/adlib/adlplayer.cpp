@@ -18,6 +18,7 @@
  * along with CoktelADL2VGM. If not, see <http://www.gnu.org/licenses/>.
  */
 
+#include "common/util.hpp"
 #include "common/error.hpp"
 #include "common/stream.hpp"
 
