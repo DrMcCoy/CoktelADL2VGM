@@ -34,6 +34,7 @@
 #include "common/file.hpp"
 
 #include "adlib/adlplayer.hpp"
+#include "adlib/musplayer.hpp"
 
 struct Job;
 
@@ -173,6 +174,9 @@ void convertMDY(const std::string &mdyFile, const std::string &tbrFile) {
 	// Open the input files
 	Common::File mdy(mdyFile);
 	Common::File tbr(tbrFile);
+	AdLib::MUSPlayer musPlayer(mdy, tbr);
+
+	musPlayer.convert(findFilename(mdyFile) + ".vgm");
 }
 
 /** Return the filename from a full path. */
