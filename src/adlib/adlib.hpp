@@ -26,6 +26,10 @@
 
 #include "common/types.hpp"
 
+namespace Common {
+	class WriteStream;
+}
+
 namespace AdLib {
 
 /** Base class for a VGM recording player of an AdLib music format. */

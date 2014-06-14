@@ -6,9 +6,14 @@ SUBDIRS = \
           gob \
           $(EMPTY)
 
+noinst_HEADERS = \
+                 convert.hpp \
+                 $(EMPTY)
+
 bin_PROGRAMS = cokteladl2vgm
 
 cokteladl2vgm_SOURCES = \
+                        convert.cpp \
                         cokteladl2vgm.cpp \
                         $(EMPTY)
 

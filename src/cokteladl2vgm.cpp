@@ -35,12 +35,8 @@
 #include "common/util.hpp"
 #include "common/version.hpp"
 #include "common/error.hpp"
-#include "common/file.hpp"
 
-#include "adlib/adlplayer.hpp"
-#include "adlib/musplayer.hpp"
-
-#include "gob/gamedir.hpp"
+#include "convert.hpp"
 
 struct Job;
 
@@ -49,19 +45,7 @@ void printVersion();
 
 Job parseCommandLine(int argc, char **argv);
 
-std::string findFilename(const std::string &path);
-std::string changeExtension(const std::string &file, const std::string &ext);
-
 bool isDirectory(const std::string &path);
-
-void convertADL(const std::string &adlFile);
-void convertADL(Gob::GameDir &gameDir, const std::string &adlFile);
-void convertADL(Gob::GameDir &gameDir);
-void convertMDY(const std::string &mdyFile, const std::string &tbrFile);
-void convertMDY(Gob::GameDir &gameDir, const std::string &mdyFile, const std::string &tbrFile);
-void convertMDY(Gob::GameDir &gameDir);
-
-void crawlDirectory(const std::string &directory);
 
 
 /** Type for all operations this tool can do. */
@@ -185,118 +169,6 @@ Job parseCommandLine(int argc, char **argv) {
 		job.operation = kOperationInvalid;
 
 	return job;
-}
-
-/** Convert an ADL file into VGM. */
-void convertADL(const std::string &adlFile) {
-	status("Converting ADL \"%s\" to VGM...", adlFile.c_str());
-
-	// Open the input file
-	Common::File adl(adlFile);
-	AdLib::ADLPlayer adlPlayer(adl);
-
-	adlPlayer.convert(findFilename(adlFile) + ".vgm");
-}
-
-void convertADL(Gob::GameDir &gameDir, const std::string &adlFile) {
-	status("Converting ADL \"%s\" to VGM...", adlFile.c_str());
-
-	Common::SeekableReadStream *adl = 0;
-	try {
-		adl = gameDir.getFile(adlFile);
-
-		AdLib::ADLPlayer adlPlayer(*adl);
-
-		adlPlayer.convert(adlFile + ".vgm");
-
-	} catch (Common::Exception &e) {
-		delete adl;
-
-		throw;
-	}
-}
-
-void convertADL(Gob::GameDir &gameDir) {
-	const std::list<std::string> &adl = gameDir.getADL();
-	for (std::list<std::string>::const_iterator f = adl.begin(); f != adl.end(); ++f) {
-		try {
-			convertADL(gameDir, *f);
-		} catch (Common::Exception &e) {
-			Common::printException(e, "WARNING: ");
-		}
-	}
-}
-
-/** Convert a MDY+TBR file into VGM. */
-void convertMDY(const std::string &mdyFile, const std::string &tbrFile) {
-	status("Converting MDY \"%s\" with TBR \"%s\" to VGM...", mdyFile.c_str(), tbrFile.c_str());
-
-	// Open the input files
-	Common::File mdy(mdyFile);
-	Common::File tbr(tbrFile);
-	AdLib::MUSPlayer musPlayer(mdy, tbr);
-
-	musPlayer.convert(findFilename(mdyFile) + ".vgm");
-}
-
-void convertMDY(Gob::GameDir &gameDir, const std::string &mdyFile, const std::string &tbrFile) {
-	status("Converting MDY \"%s\" with TBR \"%s\" to VGM...", mdyFile.c_str(), tbrFile.c_str());
-
-	Common::SeekableReadStream *mdy = 0;
-	Common::SeekableReadStream *tbr = 0;
-	try {
-		mdy = gameDir.getFile(mdyFile);
-		tbr = gameDir.getFile(tbrFile);
-
-		AdLib::MUSPlayer musPlayer(*mdy, *tbr);
-
-		musPlayer.convert(mdyFile + ".vgm");
-
-	} catch (Common::Exception &e) {
-		delete mdy;
-		delete tbr;
-
-		throw;
-	}
-}
-
-void convertMDY(Gob::GameDir &gameDir) {
-	const std::list<std::string> &mdy = gameDir.getMDY();
-	for (std::list<std::string>::const_iterator f = mdy.begin(); f != mdy.end(); ++f) {
-		std::string tbr = changeExtension(*f, "tbr");
-
-		try {
-			convertMDY(gameDir, *f, tbr);
-		} catch (Common::Exception &e) {
-			Common::printException(e, "WARNING: ");
-		}
-	}
-}
-
-void crawlDirectory(const std::string &directory) {
-	status("Crawling through game directory \"%s\"", directory.c_str());
-
-	Gob::GameDir gameDir(directory);
-
-	convertADL(gameDir);
-	convertMDY(gameDir);
-}
-
-/** Return the filename from a full path. */
-std::string findFilename(const std::string &path) {
-	size_t sep = path.find_last_of("\\/");
-	if (sep == std::string::npos)
-		return path;
-
-	return std::string(path, sep + 1);
-}
-
-std::string changeExtension(const std::string &file, const std::string &ext) {
-	size_t sep = file.find_last_of('.');
-	if (sep == std::string::npos)
-		return file + "." + ext;
-
-	return std::string(file, 0, sep) + "." + ext;
 }
 
 bool isDirectory(const std::string &path) {
