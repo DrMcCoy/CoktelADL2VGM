@@ -67,6 +67,7 @@ AC_SUBST(ADL2VGM_LIBS)
 AC_SUBST(WERROR)
 
 AC_CONFIG_FILES([src/common/Makefile])
+AC_CONFIG_FILES([src/adlib/Makefile])
 AC_CONFIG_FILES([src/Makefile])
 AC_CONFIG_FILES([Makefile])
 

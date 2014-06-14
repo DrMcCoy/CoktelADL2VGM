@@ -18,13 +18,15 @@
  * along with CoktelADL2VGM. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADLIB_HPP
-#define ADLIB_HPP
+#ifndef ADLIB_ADLIB_HPP
+#define ADLIB_ADLIB_HPP
 
 #include <string>
 #include <list>
 
 #include "common/types.hpp"
+
+namespace AdLib {
 
 /** Base class for a VGM recording player of an AdLib music format. */
 class AdLib {
@@ -281,4 +283,6 @@ private:
 	void writeVGMData(Common::WriteStream &vgm) const;
 };
 
-#endif // ADLIB_HPP
+} // End of namespace AdLib
+
+#endif // ADLIB_ADLIB_HPP

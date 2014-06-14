@@ -18,16 +18,18 @@
  * along with CoktelADL2VGM. If not, see <http://www.gnu.org/licenses/>.
  */
 
-#ifndef ADLPLAYER_HPP
-#define ADLPLAYER_HPP
+#ifndef ADLIB_ADLPLAYER_HPP
+#define ADLIB_ADLPLAYER_HPP
 
 #include <vector>
 
-#include "adlib.hpp"
+#include "adlib/adlib.hpp"
 
 namespace Common {
 	class SeekableReadStream;
 }
+
+namespace AdLib {
 
 /** A VGM recording player for Coktel Vision's ADL music format. */
 class ADLPlayer : public AdLib {
@@ -72,4 +74,6 @@ private:
 	uint32 getSampleDelay(uint16 delay) const;
 };
 
-#endif // ADLPLAYER_HPP
+} // End of namespace AdLib
+
+#endif // ADLIB_ADLPLAYER_HPP

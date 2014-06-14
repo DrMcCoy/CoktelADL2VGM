@@ -33,7 +33,7 @@
 #include "common/error.hpp"
 #include "common/file.hpp"
 
-#include "adlplayer.hpp"
+#include "adlib/adlplayer.hpp"
 
 struct Job;
 
@@ -161,7 +161,7 @@ void convertADL(const std::string &adlFile) {
 
 	// Open the input file
 	Common::File adl(adlFile);
-	ADLPlayer adlPlayer(adl);
+	AdLib::ADLPlayer adlPlayer(adl);
 
 	adlPlayer.convert(findFilename(adlFile) + ".vgm");
 }

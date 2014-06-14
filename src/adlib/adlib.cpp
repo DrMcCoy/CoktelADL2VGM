@@ -22,12 +22,13 @@
 #include "common/error.hpp"
 #include "common/file.hpp"
 
-#include "adlib.hpp"
+#include "adlib/adlib.hpp"
 
 static const int kPitchTom        = 24;
 static const int kPitchTomToSnare =  7;
 static const int kPitchSnareDrum  = kPitchTom + kPitchTomToSnare;
 
+namespace AdLib {
 
 // Is the operator a modulator (0) or a carrier (1)?
 const uint8 AdLib::kOperatorType[kOperatorCount] = {
@@ -557,3 +558,5 @@ void AdLib::setFreq(uint8 voice, uint16 note, bool on) {
 	writeOPL(0xA0 + voice, freq);
 	writeOPL(0xB0 + voice, value);
 }
+
+} // End of namespace AdLib

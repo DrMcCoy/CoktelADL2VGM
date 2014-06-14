@@ -21,7 +21,9 @@
 #include "common/error.hpp"
 #include "common/stream.hpp"
 
-#include "adlplayer.hpp"
+#include "adlib/adlplayer.hpp"
+
+namespace AdLib {
 
 ADLPlayer::ADLPlayer(Common::SeekableReadStream &adl) : _songData(0), _songDataSize(0), _playPos(0) {
 	load(adl);
@@ -208,3 +210,5 @@ void ADLPlayer::setInstrument(int voice, int instrument) {
 
 	setVoiceTimbre(voice, _timbres[instrument].params);
 }
+
+} // End of namespace AdLib
