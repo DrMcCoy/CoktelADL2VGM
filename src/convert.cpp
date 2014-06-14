@@ -25,6 +25,7 @@
 #include "adlib/musplayer.hpp"
 
 #include "gob/gamedir.hpp"
+#include "gob/totfile.hpp"
 
 #include "convert.hpp"
 
@@ -71,6 +72,58 @@ static void convertADL(Gob::GameDir &gameDir) {
 		} catch (Common::Exception &e) {
 			Common::printException(e, "WARNING: ");
 		}
+	}
+}
+
+static void convertTOTADL(const Gob::TOTFile &tot) {
+	for (uint i = 0; i < tot.getTOTResourceCount(); i++) {
+		char name[256];
+		snprintf(name, sizeof(name), "%s.tot.%u", tot.getName().c_str(), i);
+
+		status("Trying to convert ADL \"%s\" to VGM...", name);
+
+		Common::SeekableReadStream *adl = 0;
+		try {
+
+			adl = tot.getTOTResource(i);
+
+			AdLib::ADLPlayer adlPlayer(*adl);
+
+			adlPlayer.convert(std::string(name) + ".vgm");
+
+		} catch (Common::Exception &e) {
+			delete adl;
+			adl = 0;
+
+			Common::printException(e, "WARNING: ");
+		}
+
+		delete adl;
+	}
+
+	for (uint i = 0; i < tot.getEXTResourceCount(); i++) {
+		char name[256];
+		snprintf(name, sizeof(name), "%s.ext.%u", tot.getName().c_str(), i);
+
+		status("Trying to convert ADL \"%s\" to VGM...", name);
+
+		Common::SeekableReadStream *adl = 0;
+		try {
+
+			adl = tot.getEXTResource(i);
+
+			AdLib::ADLPlayer adlPlayer(*adl);
+
+			adlPlayer.convert(std::string(name) + ".vgm");
+
+		} catch (Common::Exception &e) {
+			delete adl;
+			adl = 0;
+
+			Common::printException(e, "WARNING: ");
+		}
+
+		delete adl;
 	}
 }
 
@@ -139,4 +192,18 @@ void crawlDirectory(const std::string &directory) {
 
 	convertADL(gameDir);
 	convertMDY(gameDir);
+
+	const std::list<std::string> &tot = gameDir.getTOT();
+	for (std::list<std::string>::const_iterator f = tot.begin(); f != tot.end(); ++f) {
+		status("Loading TOT \"%s\"", f->c_str());
+
+		try {
+			Gob::TOTFile totFile(gameDir, *f);
+
+			convertTOTADL(totFile);
+
+		} catch (Common::Exception &e) {
+			Common::printException(e, "WARNING: ");
+		}
+	}
 }
