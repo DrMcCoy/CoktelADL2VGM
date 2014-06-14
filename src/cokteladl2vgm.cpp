@@ -22,6 +22,10 @@
  *  The project's main entry point.
  */
 
+#include <sys/types.h>
+#include <sys/stat.h>
+#include <unistd.h>
+
 #include <cstdio>
 #include <cstring>
 
@@ -36,6 +40,8 @@
 #include "adlib/adlplayer.hpp"
 #include "adlib/musplayer.hpp"
 
+#include "gob/gamedir.hpp"
+
 struct Job;
 
 void printUsage(const char *name);
@@ -45,8 +51,12 @@ Job parseCommandLine(int argc, char **argv);
 
 std::string findFilename(const std::string &path);
 
+bool isDirectory(const std::string &path);
+
 void convertADL(const std::string &adlFile);
 void convertMDY(const std::string &mdyFile, const std::string &tbrFile);
+
+void crawlDirectory(const std::string &directory);
 
 
 /** Type for all operations this tool can do. */
@@ -55,7 +65,8 @@ enum Operation {
 	kOperationHelp       , ///< Show the help text.
 	kOperationVersion    , ///< Show version information.
 	kOperationADL        , ///< Convert an ADL file.
-	kOperationMDY          ///< Convert a MDY+TBR file.
+	kOperationMDY        , ///< Convert a MDY+TBR file.
+	kOperationDirectory    ///< Crawl through a game directory.
 };
 
 /** Full description of the job this tool will be doing. */
@@ -91,6 +102,10 @@ int main(int argc, char **argv) {
 				convertMDY(job.files[0], job.files[1]);
 				break;
 
+			case kOperationDirectory:
+				crawlDirectory(job.files[0]);
+				break;
+
 			case kOperationInvalid:
 			default:
 				printUsage(argv[0]);
@@ -113,7 +128,8 @@ int main(int argc, char **argv) {
 void printUsage(const char *name) {
 	std::printf("%s - Tool to convert Coktel Vision's AdLib music to VGM\n", ADL2VGM_NAME);
 	std::printf("Usage: %s [options] <file.adl>\n", name);
-	std::printf("       %s [options] <file.mdy> <file.tbr>\n\n", name);
+	std::printf("       %s [options] <file.mdy> <file.tbr>\n", name);
+	std::printf("       %s [options] </path/to/coktel/game/>\n\n", name);
 	std::printf("  -h      --help              Display this text and exit.\n");
 	std::printf("  -v      --version           Display version information and exit.\n");
 }
@@ -137,13 +153,23 @@ Job parseCommandLine(int argc, char **argv) {
 			break;
 		}
 
-		// Everything else is assumed to be a filename
+		// Everything else is assumed to be a path
 		job.files.push_back(argv[i]);
+
+		// If we have a directory, assume directory mode
+		if (isDirectory(job.files.back()))
+			job.operation = kOperationDirectory;
 	}
 
 	// Already found an operation => return it
-	if (job.operation != kOperationInvalid)
+	if (job.operation != kOperationInvalid) {
+
+		// We only support checking one directory
+		if ((job.operation == kOperationDirectory) && (job.files.size() != 1))
+			job.operation = kOperationInvalid;
+
 		return job;
+	}
 
 	// One file is assumed to be an ADL, two files MDY+TBR. Everything else is invalid
 	if      (job.files.size() == 1)
@@ -179,6 +205,12 @@ void convertMDY(const std::string &mdyFile, const std::string &tbrFile) {
 	musPlayer.convert(findFilename(mdyFile) + ".vgm");
 }
 
+void crawlDirectory(const std::string &directory) {
+	status("Crawling through game directory \"%s\"", directory.c_str());
+
+	Gob::GameDir gameDir(directory);
+}
+
 /** Return the filename from a full path. */
 std::string findFilename(const std::string &path) {
 	size_t sep = path.find_last_of("\\/");
@@ -186,4 +218,12 @@ std::string findFilename(const std::string &path) {
 		return path;
 
 	return std::string(path, sep + 1);
+}
+
+bool isDirectory(const std::string &path) {
+	struct stat s;
+	if (stat(path.c_str(), &s) != 0)
+		return false;
+
+	return s.st_mode & S_IFDIR;
 }
