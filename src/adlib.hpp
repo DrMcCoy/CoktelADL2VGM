@@ -21,6 +21,7 @@
 #ifndef ADLIB_HPP
 #define ADLIB_HPP
 
+#include <string>
 #include <list>
 
 #include "common/types.hpp"
@@ -31,7 +32,8 @@ public:
 	AdLib();
 	virtual ~AdLib();
 
-	void convert();
+	/** Convert AdLib music into VGM and write into outFile. */
+	void convert(const std::string &outFile);
 
 protected:
 	enum kVoice {
@@ -239,6 +241,7 @@ private:
 	int _halfToneOffset[kMaxVoiceCount];
 
 	std::list<VGMLine> _vgmLines;
+	uint32 _vgmDataSize;
 	uint32 _vgmLength;
 
 
@@ -271,6 +274,10 @@ private:
 	void changePitch(uint8 voice, uint16 pitchBend);
 
 	void setFreq(uint8 voice, uint16 note, bool on);
+
+	void createVGMData();
+
+	void writeVGMData(Common::WriteStream &vgm) const;
 };
 
 #endif // ADLIB_HPP

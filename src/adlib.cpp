@@ -19,6 +19,8 @@
  */
 
 #include "common/util.hpp"
+#include "common/error.hpp"
+#include "common/file.hpp"
 
 #include "adlib.hpp"
 
@@ -102,7 +104,7 @@ AdLib::VGMLine::VGMLine(byte cmd, byte a1, byte a2) : size(3) {
 }
 
 
-AdLib::AdLib() : _first(true), _ended(true) {
+AdLib::AdLib() : _first(true), _ended(true), _vgmDataSize(0), _vgmLength(0) {
 	initFreqs();
 }
 
@@ -113,15 +115,33 @@ uint32 AdLib::getSamplesPerSecond() const {
 	return kRate;
 }
 
-void AdLib::convert() {
+void AdLib::convert(const std::string &outFile) {
+	createVGMData();
+
+	Common::DumpFile vgm;
+	if (!vgm.open(outFile))
+		throw Common::Exception("Failed to open \"%s\" for writing", outFile.c_str());
+
+	writeVGMData(vgm);
+
+	vgm.flush();
+	vgm.close();
+
+	if (vgm.err())
+		throw Common::kWriteError;
+}
+
+void AdLib::createVGMData() {
+	_vgmLines.clear();
+
+	_vgmDataSize = 0;
+	_vgmLength   = 0;
+
 	_first = true;
 	_ended = false;
 
 	initOPL();
 	rewind();
-
-	_vgmLines.clear();
-	_vgmLength = 0;
 
 	while (!_ended) {
 		uint32 delay = pollMusic(_first);
@@ -131,6 +151,8 @@ void AdLib::convert() {
 			uint16 waitTime = MIN<uint32>(delay, 65535);
 
 			_vgmLines.push_back(VGMLine(0x61, waitTime >> 8, waitTime & 0xFF));
+			_vgmDataSize += 3;
+
 			delay -= waitTime;
 		}
 
@@ -138,10 +160,17 @@ void AdLib::convert() {
 	}
 
 	_vgmLines.push_back(VGMLine(0x66));
+	_vgmDataSize += 1;
+}
+
+void AdLib::writeVGMData(Common::WriteStream &vgm) const {
+	for (std::list<VGMLine>::const_iterator l = _vgmLines.begin(); l != _vgmLines.end(); ++l)
+		vgm.write(l->data, l->size);
 }
 
 void AdLib::writeOPL(byte reg, byte val) {
 	_vgmLines.push_back(VGMLine(0x5A, reg, val));
+	_vgmDataSize += 3;
 }
 
 void AdLib::end(bool killRepeat) {

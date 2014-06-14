@@ -42,6 +42,8 @@ void printVersion();
 
 Job parseCommandLine(int argc, char **argv);
 
+std::string findFilename(const std::string &path);
+
 void convertADL(const std::string &adlFile);
 void convertMDY(const std::string &mdyFile, const std::string &tbrFile);
 
@@ -162,7 +164,7 @@ void convertADL(const std::string &adlFile) {
 	ADLPlayer adlPlayer(adl);
 
 	status("Loaded...");
-	adlPlayer.convert();
+	adlPlayer.convert(findFilename(adlFile) + ".vgm");
 }
 
 /** Convert a MDY+TBR file into VGM. */
@@ -172,4 +174,13 @@ void convertMDY(const std::string &mdyFile, const std::string &tbrFile) {
 	// Open the input files
 	Common::File mdy(mdyFile);
 	Common::File tbr(tbrFile);
+}
+
+/** Return the filename from a full path. */
+std::string findFilename(const std::string &path) {
+	size_t sep = path.find_last_of("\\/");
+	if (sep == std::string::npos)
+		return path;
+
+	return std::string(path, sep + 1);
 }
