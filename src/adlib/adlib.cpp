@@ -517,6 +517,9 @@ void AdLib::resetFreqs() {
 }
 
 void AdLib::changePitch(uint8 voice, uint16 pitchBend) {
+	if (voice >= kMaxVoiceCount)
+		throw Common::Exception("Invalid voice number");
+
 	int full   = 0;
 	int frac   = 0;
 	int amount = ((pitchBend - kMidPitch) * _pitchRangeStep) / kMidPitch;
@@ -544,6 +547,9 @@ void AdLib::changePitch(uint8 voice, uint16 pitchBend) {
 }
 
 void AdLib::setFreq(uint8 voice, uint16 note, bool on) {
+	if (voice >= kMaxVoiceCount)
+		throw Common::Exception("Invalid voice number");
+
 	_voiceOn  [voice] = on;
 	_voiceNote[voice] = note;
 

@@ -26,7 +26,9 @@
 
 namespace AdLib {
 
-ADLPlayer::ADLPlayer(Common::SeekableReadStream &adl) : _songData(0), _songDataSize(0), _playPos(0) {
+ADLPlayer::ADLPlayer(Common::SeekableReadStream &adl) :
+	_songData(0), _songDataEnd(0), _songDataSize(0), _playPos(0) {
+
 	try {
 		load(adl);
 	} catch (Common::Exception &e) {
@@ -45,13 +47,14 @@ void ADLPlayer::unload() {
 	delete[] _songData;
 
 	_songData     = 0;
+	_songDataEnd  = 0;
 	_songDataSize = 0;
 
 	_playPos = 0;
 }
 
 uint32 ADLPlayer::pollMusic(bool first) {
-	if (_timbres.empty() || !_songData || !_playPos || (_playPos >= (_songData + _songDataSize))) {
+	if (_timbres.empty() || !_songData || !_playPos || (_playPos >= _songDataEnd)) {
 		end();
 		return 0;
 	}
@@ -59,6 +62,9 @@ uint32 ADLPlayer::pollMusic(bool first) {
 	// We'll ignore the first delay
 	if (first)
 		_playPos += (*_playPos & 0x80) ? 2 : 1;
+
+	if (_playPos >= _songDataEnd)
+		throw Common::Exception("Trying to read past song data");
 
 	byte cmd = *_playPos++;
 
@@ -69,8 +75,12 @@ uint32 ADLPlayer::pollMusic(bool first) {
 	}
 
 	// Set the instrument that should be modified
-	if (cmd == 0xFE)
+	if (cmd == 0xFE) {
+		if (_playPos >= _songDataEnd)
+			throw Common::Exception("Trying to read past song data");
+
 		_modifyInstrument = *_playPos++;
+	}
 
 	if (cmd >= 0xD0) {
 		// Modify an instrument
@@ -80,6 +90,9 @@ uint32 ADLPlayer::pollMusic(bool first) {
 		if (_modifyInstrument >= _timbres.size())
 			throw Common::Exception("Can't modify invalid instrument %d (%d)",
 					_modifyInstrument, (int)_timbres.size());
+
+		if ((_playPos + 1) >= _songDataEnd)
+			throw Common::Exception("Trying to read past song data");
 
 		_timbres[_modifyInstrument].params[_playPos[0]] = _playPos[1];
 		_playPos += 2;
@@ -96,6 +109,9 @@ uint32 ADLPlayer::pollMusic(bool first) {
 
 		switch (cmd & 0xF0) {
 		case 0x00: // Note on with volume
+			if ((_playPos + 1) >= _songDataEnd)
+				throw Common::Exception("Trying to read past song data");
+
 			note   = *_playPos++;
 			volume = *_playPos++;
 
@@ -104,18 +120,30 @@ uint32 ADLPlayer::pollMusic(bool first) {
 			break;
 
 		case 0xA0: // Pitch bend
+			if (_playPos >= _songDataEnd)
+				throw Common::Exception("Trying to read past song data");
+
 			bendVoicePitch(voice, ((uint16)*_playPos++) << 7);
 			break;
 
 		case 0xB0: // Set volume
+			if (_playPos >= _songDataEnd)
+				throw Common::Exception("Trying to read past song data");
+
 			setVoiceVolume(voice, *_playPos++);
 			break;
 
 		case 0xC0: // Set instrument
+			if (_playPos >= _songDataEnd)
+				throw Common::Exception("Trying to read past song data");
+
 			setInstrument(voice, *_playPos++);
 			break;
 
 		case 0x90: // Note on
+			if (_playPos >= _songDataEnd)
+				throw Common::Exception("Trying to read past song data");
+
 			noteOn(voice, *_playPos++);
 			break;
 
@@ -128,10 +156,17 @@ uint32 ADLPlayer::pollMusic(bool first) {
 		}
 	}
 
+	if (_playPos >= _songDataEnd)
+		throw Common::Exception("Trying to read past song data");
+
 	uint16 delay = *_playPos++;
 
-	if (delay & 0x80)
+	if (delay & 0x80) {
+		if (_playPos >= _songDataEnd)
+			throw Common::Exception("Trying to read past song data");
+
 		delay = ((delay & 3) << 8) | *_playPos++;
+	}
 
 	return getSampleDelay(delay);
 }
@@ -203,6 +238,7 @@ void ADLPlayer::readTimbres(Common::SeekableReadStream &adl, int timbreCount) {
 void ADLPlayer::readSongData(Common::SeekableReadStream &adl) {
 	_songDataSize = adl.size() - adl.pos();
 	_songData     = new byte[_songDataSize];
+	_songDataEnd  = _songData + _songDataSize;
 
 	if (adl.read(_songData, _songDataSize) != _songDataSize)
 		throw Common::kReadError;

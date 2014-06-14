@@ -53,6 +53,7 @@ private:
 	std::vector<Timbre> _timbres;
 
 	byte  *_songData;
+	byte  *_songDataEnd;
 	uint32 _songDataSize;
 
 	const byte *_playPos;
