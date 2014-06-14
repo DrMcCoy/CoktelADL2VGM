@@ -35,7 +35,7 @@
 #endif
 
 #ifndef PACKAGE_VERSION
-	#define PACKAGE_VERSION "0.0.0"
+	#define PACKAGE_VERSION "0.1.0"
 #endif
 
 const char *ADL2VGM_NAME            = PACKAGE_NAME;
