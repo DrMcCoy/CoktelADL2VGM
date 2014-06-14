@@ -28,6 +28,10 @@
 #include "common/types.hpp"
 #include "common/file.hpp"
 
+namespace Common {
+	class SeekableReadStream;
+}
+
 namespace Gob {
 
 class GameDir {
@@ -38,6 +42,8 @@ public:
 	const std::list<std::string> &getADL() const;
 	const std::list<std::string> &getMDY() const;
 	const std::list<std::string> &getTOT() const;
+
+	Common::SeekableReadStream *getFile(const std::string &name);
 
 private:
 	struct Archive;
@@ -84,6 +90,19 @@ private:
 	void closeArchives();
 
 	Archive *openArchive(const std::string &name);
+
+	Common::SeekableReadStream *openDirectFile(const std::string &name);
+
+	File *findArchiveFile(std::string name);
+	Common::SeekableReadStream *openArchiveFile(File &file);
+
+	uint32 getSizeChunks(Common::SeekableReadStream &src);
+
+	Common::SeekableReadStream *unpack(Common::SeekableReadStream &src, uint8 compression);
+	byte *unpack(Common::SeekableReadStream &src, int32 &size, uint8 compression);
+
+	void unpackChunks(Common::SeekableReadStream &src, byte *dest, uint32 size);
+	void unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 size);
 };
 
 } // End of namespace Gob
