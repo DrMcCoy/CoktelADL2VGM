@@ -200,6 +200,17 @@ private:
 	static const uint16 kHihatParams    [kParamCount];
 
 
+	struct VGMLine {
+		uint size;
+		byte data[3];
+
+		VGMLine();
+		VGMLine(byte cmd);
+		VGMLine(byte cmd, byte a1);
+		VGMLine(byte cmd, byte a1, byte a2);
+	};
+
+
 	bool _first;
 	bool _ended;
 
@@ -226,6 +237,9 @@ private:
 	uint16 *_freqPtr[kMaxVoiceCount];
 
 	int _halfToneOffset[kMaxVoiceCount];
+
+	std::list<VGMLine> _vgmLines;
+	uint32 _vgmLength;
 
 
 	void initOPL();

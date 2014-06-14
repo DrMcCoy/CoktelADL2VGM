@@ -83,6 +83,25 @@ const uint16 AdLib::kHihatParams    [kParamCount] = {
 	  0,  1,  0, 15, 11,  0,  7,  5,  0,  0,  0,  0,  0,  0   };
 
 
+AdLib::VGMLine::VGMLine() : size(0) {
+}
+
+AdLib::VGMLine::VGMLine(byte cmd) : size(1) {
+	data[0] = cmd;
+}
+
+AdLib::VGMLine::VGMLine(byte cmd, byte a1) : size(2) {
+	data[0] = cmd;
+	data[1] = a1;
+}
+
+AdLib::VGMLine::VGMLine(byte cmd, byte a1, byte a2) : size(3) {
+	data[0] = cmd;
+	data[1] = a1;
+	data[2] = a2;
+}
+
+
 AdLib::AdLib() : _first(true), _ended(true) {
 	initFreqs();
 }
@@ -101,17 +120,28 @@ void AdLib::convert() {
 	initOPL();
 	rewind();
 
+	_vgmLines.clear();
+	_vgmLength = 0;
+
 	while (!_ended) {
 		uint32 delay = pollMusic(_first);
-		if (delay)
-			status("| %u", delay);
+
+		_vgmLength += delay;
+		while (delay > 0) {
+			uint16 waitTime = MIN<uint32>(delay, 65535);
+
+			_vgmLines.push_back(VGMLine(0x61, waitTime >> 8, waitTime & 0xFF));
+			delay -= waitTime;
+		}
 
 		_first = false;
 	}
+
+	_vgmLines.push_back(VGMLine(0x66));
 }
 
 void AdLib::writeOPL(byte reg, byte val) {
-	status("> %u %u", reg, val);
+	_vgmLines.push_back(VGMLine(0x5A, reg, val));
 }
 
 void AdLib::end(bool killRepeat) {
