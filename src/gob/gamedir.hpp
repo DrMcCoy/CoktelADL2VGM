@@ -21,7 +21,70 @@
 #ifndef GOB_GAMEDIR_HPP
 #define GOB_GAMEDIR_HPP
 
+#include <string>
+#include <list>
+#include <map>
+
+#include "common/types.hpp"
+#include "common/file.hpp"
+
 namespace Gob {
+
+class GameDir {
+public:
+	GameDir(const std::string &path);
+	~GameDir();
+
+	const std::list<std::string> &getADL() const;
+	const std::list<std::string> &getMDY() const;
+	const std::list<std::string> &getTOT() const;
+
+private:
+	struct Archive;
+
+	struct File {
+		std::string name;
+		uint32 size;
+		uint32 offset;
+		uint8  compression;
+
+		Archive *archive;
+
+		File();
+		File(const std::string &n, uint32 s, uint32 o, uint8 c, Archive &a);
+	};
+
+	typedef std::map<std::string, File> FileMap;
+
+	struct Archive {
+		std::string  name;
+		Common::File file;
+
+		FileMap files;
+
+		Archive(const std::string &n = "");
+	};
+
+
+	std::string _path;
+
+	std::list<std::string> _files;
+
+	std::list<std::string> _stk;
+	std::list<std::string> _adl;
+	std::list<std::string> _mdy;
+	std::list<std::string> _tot;
+
+	std::list<Archive *> _archives;
+
+
+	void openDir();
+
+	void openArchives();
+	void closeArchives();
+
+	Archive *openArchive(const std::string &name);
+};
 
 } // End of namespace Gob
 
