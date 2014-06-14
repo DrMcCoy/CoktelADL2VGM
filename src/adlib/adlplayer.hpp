@@ -37,8 +37,6 @@ public:
 	ADLPlayer(Common::SeekableReadStream &adl);
 	~ADLPlayer();
 
-	void unload();
-
 protected:
 	// AdLib interface
 	uint32 pollMusic(bool first);
@@ -64,6 +62,7 @@ private:
 
 
 	void load(Common::SeekableReadStream &adl);
+	void unload();
 
 	void setInstrument(int voice, int instrument);
 
