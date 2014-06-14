@@ -45,6 +45,8 @@ public:
 
 	Common::SeekableReadStream *getFile(const std::string &name);
 
+	static Common::SeekableReadStream *unpack(Common::SeekableReadStream &src, uint8 compression);
+
 private:
 	struct Archive;
 
@@ -96,13 +98,12 @@ private:
 	File *findArchiveFile(std::string name);
 	Common::SeekableReadStream *openArchiveFile(File &file);
 
-	uint32 getSizeChunks(Common::SeekableReadStream &src);
+	static uint32 getSizeChunks(Common::SeekableReadStream &src);
 
-	Common::SeekableReadStream *unpack(Common::SeekableReadStream &src, uint8 compression);
-	byte *unpack(Common::SeekableReadStream &src, int32 &size, uint8 compression);
+	static byte *unpack(Common::SeekableReadStream &src, int32 &size, uint8 compression);
 
-	void unpackChunks(Common::SeekableReadStream &src, byte *dest, uint32 size);
-	void unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 size);
+	static void unpackChunks(Common::SeekableReadStream &src, byte *dest, uint32 size);
+	static void unpackChunk(Common::SeekableReadStream &src, byte *dest, uint32 size);
 };
 
 } // End of namespace Gob
