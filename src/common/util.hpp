@@ -116,4 +116,6 @@ void status(const char *s, ...) GCC_PRINTF(1, 2);
 
 void NORETURN_PRE error(const char *s, ...) GCC_PRINTF(1, 2) NORETURN_POST;
 
+int adl2vgm_stricmp(const char *s1, const char *s2);
+
 #endif // COMMON_UTIL_HPP
