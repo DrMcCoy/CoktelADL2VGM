@@ -277,6 +277,7 @@ private:
 
 	void createVGMData();
 
+	void writeVGMHeader(Common::WriteStream &vgm) const;
 	void writeVGMData(Common::WriteStream &vgm) const;
 };
 

@@ -163,7 +163,6 @@ void convertADL(const std::string &adlFile) {
 	Common::File adl(adlFile);
 	ADLPlayer adlPlayer(adl);
 
-	status("Loaded...");
 	adlPlayer.convert(findFilename(adlFile) + ".vgm");
 }
 
