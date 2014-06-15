@@ -34,4 +34,13 @@ extern const char *ADL2VGM_VERSION;
 // "CoktelADL2VGM 0.0.0"
 extern const char *ADL2VGM_NAMEVERSION;
 
+// "2014"
+extern const char *ADL2VGM_COPYRIGHTYEAR;
+
+// "Sven Hesse (DrMcCoy) <drmccoy@drmccoy.de>"
+extern const char *ADL2VGM_COPYRIGHTAUTHOR;
+
+// "https://..."
+extern const char *ADL2VGM_URL;
+
 #endif // COMMON_VERSION_HPP

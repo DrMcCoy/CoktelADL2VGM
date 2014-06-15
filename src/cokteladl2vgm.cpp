@@ -126,6 +126,21 @@ void printUsage(const char *name) {
 /** Print the tool's version. */
 void printVersion() {
 	std::printf("%s\n", ADL2VGM_NAMEVERSION);
+	std::printf("Copyright (c) %s %s\n", ADL2VGM_COPYRIGHTYEAR, ADL2VGM_COPYRIGHTAUTHOR);
+	std::printf("%s\n", ADL2VGM_URL);
+	std::printf("\n");
+	std::printf("%s is free software; you can redistribute it and/or\n", ADL2VGM_NAME);
+	std::printf("modify it under the terms of the GNU Affero General Public License\n");
+	std::printf("as published by the Free Software Foundation; either version 3\n");
+	std::printf("of the License, or (at your option) any later version.\n");
+	std::printf("\n");
+	std::printf("%s is distributed in the hope that it will be useful,\n", ADL2VGM_NAME);
+	std::printf("but WITHOUT ANY WARRANTY; without even the implied warranty of\n");
+	std::printf("MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE. See the\n");
+	std::printf("GNU Affero General Public License for more details.\n");
+	std::printf("\n");
+	std::printf("You should have received a copy of the GNU Affero General Public License\n");
+	std::printf("along with %s. If not, see <http://www.gnu.org/licenses/>.\n", ADL2VGM_NAME);
 }
 
 Job parseCommandLine(int argc, char **argv) {

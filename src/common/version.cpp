@@ -35,9 +35,12 @@
 #endif
 
 #ifndef PACKAGE_VERSION
-	#define PACKAGE_VERSION "1.0.0"
+	#define PACKAGE_VERSION "1.0.1"
 #endif
 
 const char *ADL2VGM_NAME            = PACKAGE_NAME;
 const char *ADL2VGM_VERSION         = PACKAGE_VERSION;
 const char *ADL2VGM_NAMEVERSION     = PACKAGE_NAME " " PACKAGE_VERSION;
+const char *ADL2VGM_COPYRIGHTYEAR   = "2014";
+const char *ADL2VGM_COPYRIGHTAUTHOR = "Sven Hesse (DrMcCoy) <drmccoy@drmccoy.de>";
+const char *ADL2VGM_URL             = "https://github.com/DrMcCoy/CoktelADL2VGM";
