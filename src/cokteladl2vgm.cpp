@@ -45,7 +45,7 @@ void printVersion();
 
 Job parseCommandLine(int argc, char **argv);
 
-bool isDirectory(const std::string &path);
+bool isDirectory(std::string path);
 
 
 /** Type for all operations this tool can do. */
@@ -186,7 +186,14 @@ Job parseCommandLine(int argc, char **argv) {
 	return job;
 }
 
-bool isDirectory(const std::string &path) {
+bool isDirectory(std::string path) {
+	if (path.empty())
+		return false;
+
+	// Erase the directory separator at the end, otherwise stat() will fail on Windows
+	if ((*path.rbegin() == '/') || (*path.rbegin() == '\\'))
+		path.erase(--path.end());
+
 	struct stat s;
 	if (stat(path.c_str(), &s) != 0)
 		return false;
