@@ -121,6 +121,21 @@ void printUsage(const char *name) {
 	std::printf("       %s [options] </path/to/coktel/game/>\n\n", name);
 	std::printf("  -h      --help              Display this text and exit.\n");
 	std::printf("  -v      --version           Display version information and exit.\n");
+	std::printf("\n");
+	std::printf("Examples:\n");
+	std::printf("- %s intro.adl\n", name);
+	std::printf("  Convert the ADL music file intro.adl into the VGM file intro.adl.vgm\n");
+	std::printf("- %s intro.mdy intro.tbr\n", name);
+	std::printf("  Convert the MDY music file intro.mdy with TBR instrument data intro.tbr\n");
+	std::printf("  into the VGM file intro.mdy.vgm\n");
+	std::printf("- %s /games/coktel/gobliiins/\n", name);
+	std::printf("  Search through all resource files of the Coktel Vision game found\n");
+	std::printf("  in /games/coktel/gobliiins/ and convert all ADL and MDY/TBR files\n");
+	std::printf("  used by the game into the VGM format\n");
+	std::printf("- %s C:\\games\\coktel\\gobliiins\\\n", name);
+	std::printf("  Like above, but on Windows\n");
+	std::printf("\n");
+	std::printf("All new files will be created in the current working directory.\n");
 }
 
 /** Print the tool's version. */
