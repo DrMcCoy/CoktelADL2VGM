@@ -34,3 +34,5 @@ Examples:
   Search through all resource files of the Coktel Vision game found
   in /games/coktel/gobliiins/ and convert all ADL and MDY/TBR files
   used by the game into the VGM format
+
+All new files will be created in the current working directory.
