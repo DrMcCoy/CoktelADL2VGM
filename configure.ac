@@ -1,6 +1,6 @@
 AC_PREREQ([2.65])
 
-AC_INIT([CoktelADL2VGM],[1.0.1])
+AC_INIT([CoktelADL2VGM],[1.0.1],[drmccoy@drmccoy.de],[cokteladl2vgm],[https://github.com/DrMcCoy/CoktelADL2VGM])
 
 AC_CONFIG_HEADERS([config.h])
 AC_CONFIG_SRCDIR([config.h.in])
