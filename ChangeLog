@@ -1,3 +1,10 @@
+Sunday, 2014-11-17 (Version 1.0.2)
+	- Fix a bug where directories are not correctly identified on Windows if the
+	  path ends in a / or \
+	- Add usage examples to the --help text
+	- Add usage blurb to the README.md
+	- Extend/Add DIST and dist_doc directives in the Makefile.am
+
 Sunday, 2014-06-15 (Version 1.0.1)
 	- Add copyright note, license information and GitHub URL to the --version text
 
