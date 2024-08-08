@@ -1,4 +1,4 @@
-AC_PREREQ([2.65])
+AC_PREREQ([2.72])
 
 AC_INIT([CoktelADL2VGM],[1.0.2],[drmccoy@drmccoy.de],[cokteladl2vgm],[https://github.com/DrMcCoy/CoktelADL2VGM])
 
@@ -27,6 +27,10 @@ AC_PROG_CXX
 AM_PROG_CC_C_O
 dnl We want a make install
 AC_PROG_INSTALL
+dnl Progs considered necessary by autoscan
+AC_PROG_AR
+AC_PROG_CPP
+AC_PROG_RANLIB
 
 dnl --with-werror
 AC_ARG_WITH([werror], [AS_HELP_STRING([--with-werror], [Compile with -Werror @<:@default=no@:>@])], [], [with_werror=no])
@@ -36,14 +40,35 @@ fi
 
 dnl Standard C, C++
 AC_C_CONST
-AC_HEADER_STDC
 
 dnl Endianness
 AC_C_BIGENDIAN()
 
+dnl Inline considered necessary by autoscan
+AC_C_INLINE
+
 dnl Special variables of the size of pointers
 AC_TYPE_INTPTR_T
 AC_TYPE_UINTPTR_T
+dnl Type check considered necessary by autoscan
+AC_TYPE_INT16_T
+AC_TYPE_INT32_T
+AC_TYPE_INT64_T
+AC_TYPE_INT8_T
+AC_TYPE_SIZE_T
+AC_TYPE_UINT16_T
+AC_TYPE_UINT32_T
+AC_TYPE_UINT64_T
+AC_TYPE_UINT8_T
+
+dnl Extra checks considered necessary by autoscan
+AC_CHECK_FUNCS([strerror])
+AC_CHECK_FUNCS([strrchr])
+AC_CHECK_HEADERS([inttypes.h])
+AC_CHECK_HEADERS([stdint.h])
+AC_CHECK_HEADERS([unistd.h])
+AC_CHECK_HEADER_STDBOOL
+AC_FUNC_ERROR_AT_LINE
 
 dnl Extra flags
 case "$target" in
