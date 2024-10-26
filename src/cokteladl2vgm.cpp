@@ -47,7 +47,6 @@ Job parseCommandLine(int argc, char **argv);
 
 bool isDirectory(std::string path);
 
-
 /** Type for all operations this tool can do. */
 enum Operation {
 	kOperationInvalid = 0, ///< Invalid command line.
@@ -66,7 +65,6 @@ struct Job {
 	Job() : operation(kOperationInvalid) {
 	}
 };
-
 
 int main(int argc, char **argv) {
 	// Find out what we're supposed to do
