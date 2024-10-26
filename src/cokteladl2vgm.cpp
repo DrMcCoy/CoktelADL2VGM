@@ -129,7 +129,7 @@ void printUsage(const char *name) {
 	std::printf("- %s /games/coktel/gobliiins/\n", name);
 	std::printf("  Search through all resource files of the Coktel Vision game found\n");
 	std::printf("  in /games/coktel/gobliiins/ and convert all ADL and MDY/TBR files\n");
-	std::printf("  used by the game into the VGM format\n");
+	std::printf("  Used by the game into the VGM format\n");
 	std::printf("- %s C:\\games\\coktel\\gobliiins\\\n", name);
 	std::printf("  Like above, but on Windows\n");
 	std::printf("\n");
