@@ -143,7 +143,7 @@ bool SeekableSubReadStream::seek(int32 offset, int whence) {
 	switch (whence) {
 	case SEEK_END:
 		offset = size() + offset;
-		// fallthrough
+		// Fall through
 	case SEEK_SET:
 		_pos = _begin + offset;
 		break;
@@ -203,7 +203,7 @@ uint32 BufferedReadStream::read(void *dataPtr, uint32 dataSize) {
 		// Refill the buffer.
 		// If we didn't read as many bytes as requested, the reason
 		// is EOF or an error. In that case we truncate the buffer
-		// size, as well as the number of  bytes we are going to
+		// size, as well as the number of bytes we are going to
 		// return to the caller.
 		_bufSize = _parentStream->read(_buf, _realBufSize);
 		_pos = 0;
