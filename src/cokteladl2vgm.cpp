@@ -54,7 +54,7 @@ enum Operation {
 	kOperationVersion    , ///< Show version information.
 	kOperationADL        , ///< Convert an ADL file.
 	kOperationMDY        , ///< Convert a MDY+TBR file.
-	kOperationDirectory    ///< Crawl through a game directory.
+	kOperationDirectory  , ///< Crawl through a game directory.
 };
 
 /** Full description of the job this tool will be doing. */
