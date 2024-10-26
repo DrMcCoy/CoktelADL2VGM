@@ -41,6 +41,6 @@
 const char *ADL2VGM_NAME            = PACKAGE_NAME;
 const char *ADL2VGM_VERSION         = PACKAGE_VERSION;
 const char *ADL2VGM_NAMEVERSION     = PACKAGE_NAME " " PACKAGE_VERSION;
-const char *ADL2VGM_COPYRIGHTYEAR   = "2014";
+const char *ADL2VGM_COPYRIGHTYEAR   = "2014-2024";
 const char *ADL2VGM_COPYRIGHTAUTHOR = "Sven Hesse (DrMcCoy) <drmccoy@drmccoy.de>";
 const char *ADL2VGM_URL             = "https://github.com/DrMcCoy/CoktelADL2VGM";
