@@ -113,7 +113,9 @@ int main(int argc, char **argv) {
 
 /** Print usage/help text. */
 void printUsage(const char *name) {
-	std::printf("%s - Tool to convert Coktel Vision's AdLib music to VGM\n", ADL2VGM_NAME);
+	std::printf(ADL2VGM_NAME);
+	std::printf("\n");
+	std::printf("%s - Tool to convert Coktel Vision's AdLib music to VGM\n");
 	std::printf("Usage: %s [options] <file.adl>\n", name);
 	std::printf("       %s [options] <file.mdy> <file.tbr>\n", name);
 	std::printf("       %s [options] </path/to/coktel/game/>\n\n", name);
